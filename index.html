@@ -7,6 +7,9 @@
     <!-- Vuejs CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/607acc4652.js" crossorigin="anonymous"></script>
 
@@ -19,6 +22,8 @@
         <!-- Bootstrap -->
         <div class="container">
             <p class="h1">{{title}}</p>
+
+            <button v-on:click="fetchPatients">fetchPatients</button>
 
         </div>
 
