@@ -10,7 +10,6 @@ app.component('patient-selector', {
             action: '/patients',
             
             patients: [], // Array to store fetched patients
-            searchTerm: '',
             selectedPatient: '',
             
             searchTermById: '',
@@ -32,7 +31,6 @@ app.component('patient-selector', {
         fetchPatients: async function() {
             try {
             const response = await axios.get(this.baseurl + this.action);
-            const patients = response.data;
 
             // Processing patient data as needed
             this.patients = response.data;
@@ -191,7 +189,7 @@ app.component('patient-selector', {
 
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">
         <div class="col-12">
-            <h3>Select Patients</h3>
+            <h3>Select Patient</h3>
         </div>
         <div class="col-12">
             <select class="form-select" v-model="selectedPatient">

@@ -3,7 +3,8 @@ const app = Vue.createApp({
         return {
             backendBaseURL: 'http://127.0.0.1:8000',
 
-            isPatientComponentVisible: true,
+            isPatientComponentVisible: false,
+            isDoctorComponentVisible: true,
             faCaretLeft: 'fa-caret-left',
             faCaretDown: 'fa-caret-down',
         };
@@ -15,6 +16,13 @@ const app = Vue.createApp({
                 return;
             }
             this.isPatientComponentVisible = true;
+        },
+        updateDoctorComponentVisibilityState: function() {
+            if (this.isDoctorComponentVisible) {
+                this.isDoctorComponentVisible = false;
+                return;
+            }
+            this.isDoctorComponentVisible = true;
         },
 
         fetchPatients: async function() {
