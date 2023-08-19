@@ -21,10 +21,17 @@
     <div id="id">
         <!-- Bootstrap -->
         <div class="container">
-            <p class="h1">{{title}}</p>
-
-            <button v-on:click="fetchPatients">fetchPatients</button>
-
+            
+            <div class="row border border-1 shadow-sm rounded p-4 m-4">
+                <div class="col-12 d-flex justify-content-between">
+                    <h1>Patient Selection</h1>
+                    <button class="btn" v-on:click="updatePatientComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
+                </div>
+                <div class="col-12" v-show="isPatientComponentVisible">                    
+                    <!-- Patient-selector component -->
+                    <patient-selector v-bind:baseurl="backendBaseURL"></patient-selector>
+                </div>
+            </div>
         </div>
 
         <!-- End Vuejs App -->
@@ -35,6 +42,7 @@
     <script src="./main.js"></script>
 
     <!-- Import Vue Components -->
+    <script src="./components/PatientSelector.js"></script>
 
     <!-- Mount Vue App -->
     <script>

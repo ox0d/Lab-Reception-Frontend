@@ -1,12 +1,23 @@
 const app = Vue.createApp({
     data: function() {
         return {
-            title: "Hello World!",
+            backendBaseURL: 'http://127.0.0.1:8000',
+
+            isPatientComponentVisible: true,
+            faCaretLeft: 'fa-caret-left',
+            faCaretDown: 'fa-caret-down',
         };
     },
     methods: {
-        
-        async fetchPatients() {
+        updatePatientComponentVisibilityState: function() {
+            if (this.isPatientComponentVisible) {
+                this.isPatientComponentVisible = false;
+                return;
+            }
+            this.isPatientComponentVisible = true;
+        },
+
+        fetchPatients: async function() {
             try {
             const response = await axios.get('http://127.0.0.1:8000/patients');
             const patients = response.data;
