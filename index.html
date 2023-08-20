@@ -26,18 +26,19 @@
             <!-- Patient-selector component -->
             <div class="row border border-1 shadow-sm rounded p-4 m-4">
                 <div class="col-12 d-flex justify-content-between">
-                    <h1>Patient Selection</h1>
+                    <h2>Patient Selection</h2>
                     <button class="btn" v-on:click="updatePatientComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
                 </div>
                 <div class="col-12" v-show="isPatientComponentVisible">                    
-                    <patient-selector v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true"></patient-selector>
+                    <patient-selector v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true" v-on:selected-patient="addToSelectedPatient"></patient-selector>
                 </div>
             </div>
+            {{selectedPatient}}
 
             <!-- New-patient-form component -->
             <div class="row border border-1 shadow-sm rounded p-4 m-4" v-show="isNewPatientFormComponentVisible">
                 <div class="col-12 d-flex justify-content-between">
-                    <h1>Add New Patient</h1>
+                    <h2>Add New Patient</h2>
                     <button class="btn" v-on:click="updateNewPatientFormComponentVisibilityState"><i class="fa-solid fa-solid fa-xmark fs-3"></i></button>
                 </div>
                 <div class="col-12">
@@ -48,13 +49,30 @@
             <!-- Doctor-selector component -->
             <div class="row border border-1 shadow-sm rounded p-4 m-4">
                 <div class="col-12 d-flex justify-content-between">
-                    <h1>Doctor Selection</h1>
+                    <h2>Doctor Selection</h2>
                     <button class="btn" v-on:click="updateDoctorComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isDoctorComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
                 </div>
                 <div class="col-12" v-show="isDoctorComponentVisible">                    
-                    <doctor-selector v-bind:baseurl="backendBaseURL"></doctor-selector>
+                    <doctor-selector v-bind:baseurl="backendBaseURL" v-on:selected-doctor="addToSelectedDoctor"></doctor-selector>
                 </div>
             </div>
+            {{selectedDoctor}}
+
+            <!-- test-selector component -->
+            <div class="row border border-1 shadow-sm rounded p-4 m-4">
+                <div class="col-12 d-flex justify-content-between">
+                    <h2>Test Selection</h2>
+                    <button class="btn" v-on:click="updateTestComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isTestComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
+                </div>
+                <div class="col-12" v-show="isTestComponentVisible">                    
+                    <test-selector v-bind:baseurl="backendBaseURL" v-on:selected-tests="addToSelectedTests"></test-selector>
+                </div>
+            </div>
+
+            {{selectedTests}}
+
+
+
         </div>
 
         
@@ -70,6 +88,7 @@
     <script src="./components/PatientSelector.js"></script>
     <script src="./components/NewPatientForm.js"></script>
     <script src="./components/DoctorSelector.js"></script>
+    <script src="./components/TestSelector.js"></script>
 
     <!-- Mount Vue App -->
     <script>

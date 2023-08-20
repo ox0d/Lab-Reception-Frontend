@@ -9,7 +9,7 @@ app.component('patient-selector', {
             required: true,
         }
     },
-    emits: ['show-patient-form'],
+    emits: ['show-patient-form', 'selected-patient'],
     data: function() {
         return {
             action: '/patients',
@@ -162,16 +162,28 @@ app.component('patient-selector', {
             this.addNewPatientState = false;
             return filteredPatients; // Return the filtered array
         },
-      },
-      mounted: function() {
+    },
+
+    updated: function() {
+        console.log("Component has been updated");
+        
+        if (this.selectedPatient == '') {
+            this.$emit('selected-patient', '');
+            return;
+        }
+
+        this.$emit('selected-patient', this.selectedPatient);
+    },
+
+    mounted: function() {
         this.fetchPatients(); // Fetch patients when component is mounted
-      },
+    },
 
     template:
     /*html*/
     `
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">
-        <div class="col-12">
+        <div class="col-12 table-responsive">
             <h3>Patients List</h3>
             <table class="table table-bordered">
                 <thead>
@@ -203,7 +215,7 @@ app.component('patient-selector', {
             <h3>Select Patient</h3>
         </div>
         <div class="col-12">
-            <select class="form-select" v-model="computedSelectedPatient">
+            <select class="form-select" v-model="selectedPatient">
                 <option value="">Select a patient</option>
                 <option v-for="patient in patients" v-bind:key="patient.id" v-bind:value="patient.id">
                     {{ patient.full_name }}

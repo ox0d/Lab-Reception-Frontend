@@ -5,6 +5,7 @@ app.component('doctor-selector', {
             required: true,
         }
     },
+    emits: ['selected-doctor'],
     data: function() {
         return {
             action: '/doctors',
@@ -104,8 +105,7 @@ app.component('doctor-selector', {
             if (filteredDoctors.length === 0) {
                 this.addNewDoctorState = true;
                 return;
-            }
-          
+            }          
             
             this.addNewDoctorState = false;
             return filteredDoctors; // Return the filtered array
@@ -145,17 +145,24 @@ app.component('doctor-selector', {
                       
             this.addNewDoctorState = false;
             return filteredDoctors; // Return the filtered array
+            },
         },
-      },
-      mounted: function() {
+        updated: function() {
+            if (this.selectedDoctor == '') {
+                this.$emit('selected-doctor', '');
+                return;
+            }
+            this.$emit('selected-doctor', this.selectedDoctor);
+        },
+        mounted: function() {
         this.fetchDoctors(); // Fetch doctors when component is mounted
-      },
+        },
 
     template:
     /*html*/
     `
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">
-        <div class="col-12">
+        <div class="col-12 table-responsive">
             <h3>Doctors List</h3>
             <table class="table table-bordered">
                 <thead>
@@ -166,7 +173,7 @@ app.component('doctor-selector', {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="doctor in doctors" :key="doctor.id">
+                    <tr v-for="doctor in doctors" v-bind:key="doctor.id">
                         <td>{{ doctor.id }}</td>
                         <td>{{ doctor.full_name }}</td>
                         <td>{{ doctor.phone_number }}</td>

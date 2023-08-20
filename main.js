@@ -4,12 +4,18 @@ const app = Vue.createApp({
             backendBaseURL: 'http://127.0.0.1:8000',
 
             isPatientComponentVisible: true,
-            isNewPatientFormComponentVisible: true,
+            isNewPatientFormComponentVisible: false,
             isDoctorComponentVisible: false,
+            isTestComponentVisible: false,
+
             faCaretLeft: 'fa-caret-left',
             faCaretDown: 'fa-caret-down',
 
             newPatientId: 0,
+
+            selectedPatient: '',
+            selectedDoctor: '',
+            selectedTests: {},
         };
     },
     methods: {
@@ -34,27 +40,31 @@ const app = Vue.createApp({
             }
             this.isDoctorComponentVisible = true;
         },
+        updateTestComponentVisibilityState: function() {
+            if (this.isTestComponentVisible) {
+                this.isTestComponentVisible = false;
+                return;
+            }
+            this.isTestComponentVisible = true;
+        },
 
         updateNewPatientId: function(id) {
             this.newPatientId = id;
         },
-            
-        // async updatePatient(patientId, patientData) {
-        //     try {
-        //     const response = await axios.put(`http://127.0.0.1:8000/patients/${patientId}`, patientData);
-        //     console.log(response.data.message); // Success message
-        //     } catch (error) {
-        //     console.error('Error updating patient:', error);
-        //     }
-        // },
-    
-        // async deletePatient(patientId) {
-        //     try {
-        //     const response = await axios.delete(`http://127.0.0.1:8000/patients/${patientId}`);
-        //     console.log(response.data.message); // Success message
-        //     } catch (error) {
-        //     console.error('Error deleting patient:', error);
-        //     }
-        // },
+
+        addToSelectedPatient: function(selectedPatient) {
+            this.selectedPatient = selectedPatient;
+        },
+        addToSelectedDoctor: function(selectedDoctor) {
+            this.selectedDoctor = selectedDoctor;
+        },
+        addToSelectedTests: function(selectedTests) {
+            const arrayWithDuplicates = selectedTests;
+            const uniqueArray = arrayWithDuplicates.filter((value, index, self) => {
+                return self.indexOf(value) === index;
+            });
+
+            this.selectedTests = uniqueArray;
+        },            
     },
 })
