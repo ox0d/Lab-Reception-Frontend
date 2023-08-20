@@ -3,8 +3,13 @@ app.component('patient-selector', {
         baseurl: {
             type: String,
             required: true,
+        },
+        newpatientid: {
+            type: Number,
+            required: true,
         }
     },
+    emits: ['show-patient-form'],
     data: function() {
         return {
             action: '/patients',
@@ -39,7 +44,7 @@ app.component('patient-selector', {
             }
         },
         
-        updatePatientsByIdState() {
+        updatePatientsByIdState: function() {
             if (this.searchTermById == '') {
                 this.patientsByIdState = false;
 
@@ -55,7 +60,7 @@ app.component('patient-selector', {
             this.isFullNameInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
-        updatePatientsByFullNameState() {
+        updatePatientsByFullNameState: function() {
             if (this.searchTermByFullName == '') {
                 this.patientsByFullNameState = false;
 
@@ -72,7 +77,7 @@ app.component('patient-selector', {
             this.isIdInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
-        updatePatientsByPhoneNumberState() {
+        updatePatientsByPhoneNumberState: function() {
             if (this.searchTermByPhoneNumber == '') {
                 this.patientsByPhoneNumberState = false;
 
@@ -90,12 +95,19 @@ app.component('patient-selector', {
             this.isFullNameInputDisabled = true;
         },
 
-        showNewPatientForm() {
-          // Implement logic to show a form for adding a new patient
-        //   this.showAddPatientForm = true;
+        showNewPatientForm: function() {
+            // Show form for adding a new patient
+            this.$emit('show-patient-form');
         },
       },
       computed: {
+        computedSelectedPatient: function() {
+            if (this.newpatientid > 0) {
+                this.fetchPatients(); // Fetch patients when new patient is added
+                return this.newpatientid;
+            }
+            return this.selectedPatient; // Return the original selectedPatient
+        },
         filteredPatientsById: function() {
             if (this.searchTermById === '') {
                 return []; // Return an empty array when no search term is entered
@@ -109,8 +121,7 @@ app.component('patient-selector', {
             if (filteredPatients.length === 0) {
                 this.addNewPatientState = true;
                 return;
-            }
-          
+            }          
             
             this.addNewPatientState = false;
             return filteredPatients; // Return the filtered array
@@ -152,7 +163,7 @@ app.component('patient-selector', {
             return filteredPatients; // Return the filtered array
         },
       },
-      mounted() {
+      mounted: function() {
         this.fetchPatients(); // Fetch patients when component is mounted
       },
 
@@ -192,9 +203,9 @@ app.component('patient-selector', {
             <h3>Select Patient</h3>
         </div>
         <div class="col-12">
-            <select class="form-select" v-model="selectedPatient">
+            <select class="form-select" v-model="computedSelectedPatient">
                 <option value="">Select a patient</option>
-                <option v-for="patient in patients" :key="patient.id" :value="patient.id">
+                <option v-for="patient in patients" v-bind:key="patient.id" v-bind:value="patient.id">
                     {{ patient.full_name }}
                 </option>
             </select>

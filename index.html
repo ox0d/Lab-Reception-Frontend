@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Home Page</title>
     <!-- Vuejs CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -29,7 +30,18 @@
                     <button class="btn" v-on:click="updatePatientComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
                 </div>
                 <div class="col-12" v-show="isPatientComponentVisible">                    
-                    <patient-selector v-bind:baseurl="backendBaseURL"></patient-selector>
+                    <patient-selector v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true"></patient-selector>
+                </div>
+            </div>
+
+            <!-- New-patient-form component -->
+            <div class="row border border-1 shadow-sm rounded p-4 m-4" v-show="isNewPatientFormComponentVisible">
+                <div class="col-12 d-flex justify-content-between">
+                    <h1>Add New Patient</h1>
+                    <button class="btn" v-on:click="updateNewPatientFormComponentVisibilityState"><i class="fa-solid fa-solid fa-xmark fs-3"></i></button>
+                </div>
+                <div class="col-12">
+                    <new-patient-form v-bind:baseurl="backendBaseURL" v-on:patient-created="updateNewPatientId"></new-patient-form>
                 </div>
             </div>
 
@@ -45,6 +57,8 @@
             </div>
         </div>
 
+        
+
         <!-- End Vuejs App -->
     </div>
 
@@ -54,6 +68,7 @@
 
     <!-- Import Vue Components -->
     <script src="./components/PatientSelector.js"></script>
+    <script src="./components/NewPatientForm.js"></script>
     <script src="./components/DoctorSelector.js"></script>
 
     <!-- Mount Vue App -->

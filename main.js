@@ -3,10 +3,13 @@ const app = Vue.createApp({
         return {
             backendBaseURL: 'http://127.0.0.1:8000',
 
-            isPatientComponentVisible: false,
-            isDoctorComponentVisible: true,
+            isPatientComponentVisible: true,
+            isNewPatientFormComponentVisible: true,
+            isDoctorComponentVisible: false,
             faCaretLeft: 'fa-caret-left',
             faCaretDown: 'fa-caret-down',
+
+            newPatientId: 0,
         };
     },
     methods: {
@@ -17,6 +20,13 @@ const app = Vue.createApp({
             }
             this.isPatientComponentVisible = true;
         },
+        updateNewPatientFormComponentVisibilityState: function() {
+            if (this.isNewPatientFormComponentVisible) {
+                this.isNewPatientFormComponentVisible = false;
+                return;
+            }
+            this.isNewPatientFormComponentVisible = true;
+        },
         updateDoctorComponentVisibilityState: function() {
             if (this.isDoctorComponentVisible) {
                 this.isDoctorComponentVisible = false;
@@ -25,42 +35,26 @@ const app = Vue.createApp({
             this.isDoctorComponentVisible = true;
         },
 
-        fetchPatients: async function() {
-            try {
-            const response = await axios.get('http://127.0.0.1:8000/patients');
-            const patients = response.data;
-            // Process the patient data as needed
-            console.log(patients);
-            } catch (error) {
-            console.error('Error fetching patients:', error);
-            }
+        updateNewPatientId: function(id) {
+            this.newPatientId = id;
         },
+            
+        // async updatePatient(patientId, patientData) {
+        //     try {
+        //     const response = await axios.put(`http://127.0.0.1:8000/patients/${patientId}`, patientData);
+        //     console.log(response.data.message); // Success message
+        //     } catch (error) {
+        //     console.error('Error updating patient:', error);
+        //     }
+        // },
     
-        async createPatient(patientData) {
-            try {
-            const response = await axios.post('http://127.0.0.1:8000/patients', patientData);
-            console.log(response.data.message); // Success message
-            } catch (error) {
-            console.error('Error creating patient:', error);
-            }
-        },
-    
-        async updatePatient(patientId, patientData) {
-            try {
-            const response = await axios.put(`http://127.0.0.1:8000/patients/${patientId}`, patientData);
-            console.log(response.data.message); // Success message
-            } catch (error) {
-            console.error('Error updating patient:', error);
-            }
-        },
-    
-        async deletePatient(patientId) {
-            try {
-            const response = await axios.delete(`http://127.0.0.1:8000/patients/${patientId}`);
-            console.log(response.data.message); // Success message
-            } catch (error) {
-            console.error('Error deleting patient:', error);
-            }
-        },
+        // async deletePatient(patientId) {
+        //     try {
+        //     const response = await axios.delete(`http://127.0.0.1:8000/patients/${patientId}`);
+        //     console.log(response.data.message); // Success message
+        //     } catch (error) {
+        //     console.error('Error deleting patient:', error);
+        //     }
+        // },
     },
 })

@@ -39,7 +39,7 @@ app.component('doctor-selector', {
             }
         },
         
-        updateDoctorsByIdState() {
+        updateDoctorsByIdState: function() {
             if (this.searchTermById == '') {
                 this.doctorsByIdState = false;
 
@@ -55,7 +55,7 @@ app.component('doctor-selector', {
             this.isFullNameInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
-        updateDoctorsByFullNameState() {
+        updateDoctorsByFullNameState: function() {
             if (this.searchTermByFullName == '') {
                 this.doctorsByFullNameState = false;
 
@@ -72,7 +72,7 @@ app.component('doctor-selector', {
             this.isIdInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
-        updateDoctorsByPhoneNumberState() {
+        updateDoctorsByPhoneNumberState: function() {
             if (this.searchTermByPhoneNumber == '') {
                 this.doctorsByPhoneNumberState = false;
 
@@ -147,7 +147,7 @@ app.component('doctor-selector', {
             return filteredDoctors; // Return the filtered array
         },
       },
-      mounted() {
+      mounted: function() {
         this.fetchDoctors(); // Fetch doctors when component is mounted
       },
 
