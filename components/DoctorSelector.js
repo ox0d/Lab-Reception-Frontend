@@ -59,6 +59,7 @@ app.component('doctor-selector', {
             this.isFullNameInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
+        
         updateDoctorsByFullNameState: function() {
             if (this.searchTermByFullName == '') {
                 this.doctorsByFullNameState = false;
@@ -76,6 +77,7 @@ app.component('doctor-selector', {
             this.isIdInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
+
         updateDoctorsByPhoneNumberState: function() {
             if (this.searchTermByPhoneNumber == '') {
                 this.doctorsByPhoneNumberState = false;
@@ -94,7 +96,7 @@ app.component('doctor-selector', {
             this.isFullNameInputDisabled = true;
         },
 
-        changePage(pageNumber) {
+        changePage: function(pageNumber) {
             if (pageNumber >= 1 && pageNumber <= this.pageCount) {
                 this.currentPage = pageNumber;
             }
@@ -118,7 +120,8 @@ app.component('doctor-selector', {
             
             this.addNewDoctorState = false;
             return filteredDoctors; // Return the filtered array
-        },          
+        },  
+
         filteredDoctorsByFullName: function() {
             if (this.searchTermByFullName === '') {
                 return []; // Return an empty array when no search term is entered
@@ -137,6 +140,7 @@ app.component('doctor-selector', {
             this.addNewDoctorState = false;
             return filteredDoctors; // Return the filtered array
         },
+
         filteredDoctorsByPhoneNumber: function() {
             if (this.searchTermByPhoneNumber === '') {
                 return []; // Return an empty array when no search term is entered
@@ -154,27 +158,30 @@ app.component('doctor-selector', {
                       
             this.addNewDoctorState = false;
             return filteredDoctors; // Return the filtered array
-            },
+        },
 
-            pageCount() {
-                return Math.ceil(this.doctors.length / this.pageSize);
-            },
-            displayedDoctors() {
-                const startIndex = (this.currentPage - 1) * this.pageSize;
-                const endIndex = startIndex + this.pageSize;
-                return this.doctors.slice(startIndex, endIndex);
-            }
+        pageCount: function() {
+            return Math.ceil(this.doctors.length / this.pageSize);
         },
-        updated: function() {
-            if (this.selectedDoctor == '') {
-                this.$emit('selected-doctor', '');
-                return;
-            }
-            this.$emit('selected-doctor', this.selectedDoctor);
-        },
-        mounted: function() {
-        this.fetchDoctors(); // Fetch doctors when component is mounted
-        },
+
+        displayedDoctors: function() {
+            const startIndex = (this.currentPage - 1) * this.pageSize;
+            const endIndex = startIndex + this.pageSize;
+            return this.doctors.slice(startIndex, endIndex);
+        }
+    },
+
+    updated: function() {
+        if (this.selectedDoctor == '') {
+            this.$emit('selected-doctor', '');
+            return;
+        }
+        this.$emit('selected-doctor', this.selectedDoctor);
+    },
+
+    mounted: function() {
+    this.fetchDoctors(); // Fetch doctors when component is mounted
+    },
 
     template:
     /*html*/
@@ -312,4 +319,4 @@ app.component('doctor-selector', {
       </div>
     </div>
     `,
-})
+});

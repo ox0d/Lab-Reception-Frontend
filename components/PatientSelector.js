@@ -67,6 +67,7 @@ app.component('patient-selector', {
             this.isFullNameInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
+
         updatePatientsByFullNameState: function() {
             if (this.searchTermByFullName == '') {
                 this.patientsByFullNameState = false;
@@ -84,6 +85,7 @@ app.component('patient-selector', {
             this.isIdInputDisabled = true;
             this.isPhoneNumberInputDisabled = true;
         },
+
         updatePatientsByPhoneNumberState: function() {
             if (this.searchTermByPhoneNumber == '') {
                 this.patientsByPhoneNumberState = false;
@@ -102,7 +104,7 @@ app.component('patient-selector', {
             this.isFullNameInputDisabled = true;
         },
 
-        changePage(pageNumber) {
+        changePage: function(pageNumber) {
             if (pageNumber >= 1 && pageNumber <= this.pageCount) {
                 this.currentPage = pageNumber;
             }
@@ -131,7 +133,8 @@ app.component('patient-selector', {
             
             this.addNewPatientState = false;
             return filteredPatients; // Return the filtered array
-        },          
+        },   
+
         filteredPatientsByFullName: function() {
             if (this.searchTermByFullName === '') {
                 return []; // Return an empty array when no search term is entered
@@ -150,6 +153,7 @@ app.component('patient-selector', {
             this.addNewPatientState = false;
             return filteredPatients; // Return the filtered array
         },
+
         filteredPatientsByPhoneNumber: function() {
             if (this.searchTermByPhoneNumber === '') {
                 return []; // Return an empty array when no search term is entered
@@ -169,10 +173,11 @@ app.component('patient-selector', {
             return filteredPatients; // Return the filtered array
         },
 
-        pageCount() {
+        pageCount: function() {
             return Math.ceil(this.patients.length / this.pageSize);
         },
-        displayedPatients() {
+        
+        displayedPatients: function() {
             const startIndex = (this.currentPage - 1) * this.pageSize;
             const endIndex = startIndex + this.pageSize;
             return this.patients.slice(startIndex, endIndex);
