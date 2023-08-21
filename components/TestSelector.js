@@ -70,7 +70,7 @@ app.component('test-selector', {
     /*html*/
     `
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">
-        <div class="col-6 table-responsive" v-for="testCategorie in testCategories" v-bind:key="testCategorie.id">
+        <div class="col-md-12 col-lg-6 table-responsive" v-for="testCategorie in testCategories" v-bind:key="testCategorie.id">
             <table class="table table-bordered">
                 <thead>
                     <tr>

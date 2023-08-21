@@ -21,10 +21,10 @@
     <!-- Vuejs App -->
     <div id="id">
         <!-- Bootstrap -->
-        <div class="container">
+        <div class="container-lg">
             
             <!-- Patient-selector component -->
-            <div class="row border border-1 shadow-sm rounded p-4 m-4">
+            <div class="row border border-1 shadow-sm rounded p-4 my-4">
                 <div class="col-12 d-flex justify-content-between">
                     <h2>Patient Selection</h2>
                     <button class="btn" v-on:click="updatePatientComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
@@ -33,21 +33,20 @@
                     <patient-selector v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true" v-on:selected-patient="addToSelectedPatient"></patient-selector>
                 </div>
             </div>
-            {{selectedPatient}}
 
             <!-- New-patient-form component -->
-            <div class="row border border-1 shadow-sm rounded p-4 m-4" v-show="isNewPatientFormComponentVisible">
+            <div class="row border border-1 shadow-sm rounded p-4 mb-4" v-show="isNewPatientFormComponentVisible">
                 <div class="col-12 d-flex justify-content-between">
                     <h2>Add New Patient</h2>
                     <button class="btn" v-on:click="updateNewPatientFormComponentVisibilityState"><i class="fa-solid fa-solid fa-xmark fs-3"></i></button>
                 </div>
                 <div class="col-12">
-                    <new-patient-form v-bind:baseurl="backendBaseURL" v-on:patient-created="updateNewPatientId"></new-patient-form>
+                    <new-patient-form v-bind:baseurl="backendBaseURL" v-on:patient-created="updateNewPatientId" v-on:toast-message="updateToastMessage"></new-patient-form>
                 </div>
             </div>
 
             <!-- Doctor-selector component -->
-            <div class="row border border-1 shadow-sm rounded p-4 m-4">
+            <div class="row border border-1 shadow-sm rounded p-4 mb-4">
                 <div class="col-12 d-flex justify-content-between">
                     <h2>Doctor Selection</h2>
                     <button class="btn" v-on:click="updateDoctorComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isDoctorComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
@@ -56,10 +55,9 @@
                     <doctor-selector v-bind:baseurl="backendBaseURL" v-on:selected-doctor="addToSelectedDoctor"></doctor-selector>
                 </div>
             </div>
-            {{selectedDoctor}}
 
             <!-- test-selector component -->
-            <div class="row border border-1 shadow-sm rounded p-4 m-4">
+            <div class="row border border-1 shadow-sm rounded p-4 mb-4" v-if="newAppointment.patient_id !== '' && newAppointment.doctor_id !== ''">
                 <div class="col-12 d-flex justify-content-between">
                     <h2>Test Selection</h2>
                     <button class="btn" v-on:click="updateTestComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isTestComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
@@ -69,7 +67,31 @@
                 </div>
             </div>
 
-            {{selectedTests}}
+            <!-- {{newAppointment.patient_id}}
+            {{newAppointment.doctor_id}}
+            {{newAppointment.test_ids}} -->
+
+            <!-- Submit schedule Appointment -->
+            <div class="row p-4 m-4">
+                <div class="col-12 text-center">
+                    <form @submit.prevent="submitForm">
+                        <button type="submit" class="btn btn-primary" v-if="this.newAppointment.test_ids.length > 0">Schedule Appointment</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Toast container -->
+            <div class="position-fixed bottom-0 end-0 p-3">
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast-header bg-primary text-white">
+                    <strong class="me-auto">Success</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{this.toastMessage}}
+                    </div>
+                </div>
+            </div>
 
 
 

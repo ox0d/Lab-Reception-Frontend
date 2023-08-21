@@ -7,6 +7,7 @@ app.component('patient-selector', {
         newpatientid: {
             type: Number,
             required: true,
+            default: 0,
         }
     },
     emits: ['show-patient-form', 'selected-patient'],
@@ -16,6 +17,9 @@ app.component('patient-selector', {
             
             patients: [], // Array to store fetched patients
             selectedPatient: '',
+
+            pageSize: 5, // Number of rows per page
+            currentPage: 1, // Current page number
             
             searchTermById: '',
             searchTermByFullName: '',
@@ -30,17 +34,20 @@ app.component('patient-selector', {
             isPhoneNumberInputDisabled: false,
 
             addNewPatientState: false,
+
+            newPatientState: true,
+            oldPatientid: 0,
         };
     },
     methods: {
         fetchPatients: async function() {
             try {
-            const response = await axios.get(this.baseurl + this.action);
+                const response = await axios.get(this.baseurl + this.action);
 
-            // Processing patient data as needed
-            this.patients = response.data;
+                // Processing patient data as needed
+                this.patients = response.data;
             } catch (error) {
-            console.error('Error fetching patients:', error);
+                console.error('Error fetching patients:', error);
             }
         },
         
@@ -95,19 +102,18 @@ app.component('patient-selector', {
             this.isFullNameInputDisabled = true;
         },
 
+        changePage(pageNumber) {
+            if (pageNumber >= 1 && pageNumber <= this.pageCount) {
+                this.currentPage = pageNumber;
+            }
+        },
+
         showNewPatientForm: function() {
             // Show form for adding a new patient
             this.$emit('show-patient-form');
         },
       },
       computed: {
-        computedSelectedPatient: function() {
-            if (this.newpatientid > 0) {
-                this.fetchPatients(); // Fetch patients when new patient is added
-                return this.newpatientid;
-            }
-            return this.selectedPatient; // Return the original selectedPatient
-        },
         filteredPatientsById: function() {
             if (this.searchTermById === '') {
                 return []; // Return an empty array when no search term is entered
@@ -162,17 +168,40 @@ app.component('patient-selector', {
             this.addNewPatientState = false;
             return filteredPatients; // Return the filtered array
         },
+
+        pageCount() {
+            return Math.ceil(this.patients.length / this.pageSize);
+        },
+        displayedPatients() {
+            const startIndex = (this.currentPage - 1) * this.pageSize;
+            const endIndex = startIndex + this.pageSize;
+            return this.patients.slice(startIndex, endIndex);
+        }
     },
 
     updated: function() {
-        console.log("Component has been updated");
         
-        if (this.selectedPatient == '') {
+        if (this.selectedPatient == '' && this.newpatientid <= 0) {
             this.$emit('selected-patient', '');
             return;
+        } else {
+            this.$emit('selected-patient', this.selectedPatient);
         }
 
-        this.$emit('selected-patient', this.selectedPatient);
+        if (this.newpatientid != this.oldPatientid) {
+            this.newPatientState = true;
+        }
+
+        if (this.newpatientid > 0 && this.newPatientState == true) {
+            this.oldPatientid = this.newpatientid;
+
+            this.fetchPatients();
+            
+            this.selectedPatient = this.newpatientid; // Automatically select the new patient
+            this.$emit('selected-patient', this.newpatientid);
+
+            this.newPatientState = false;
+        }
     },
 
     mounted: function() {
@@ -197,7 +226,7 @@ app.component('patient-selector', {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="patient in patients" :key="patient.id">
+                    <tr v-for="(patient, index) in displayedPatients" :key="patient.id">
                         <td>{{ patient.id }}</td>
                         <td>{{ patient.full_name }}</td>
                         <td>{{ patient.birthday_date }}</td>
@@ -207,6 +236,27 @@ app.component('patient-selector', {
                     </tr>
                 </tbody>
             </table>
+
+            <div class="d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                            <a class="page-link" href="#" aria-label="Previous" @click.prevent="changePage(currentPage - 1)">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-for="page in pageCount" :key="page" :class="{ active: page === currentPage }">
+                            <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" :class="{ disabled: currentPage === pageCount }">
+                            <a class="page-link" href="#" aria-label="Next" @click.prevent="changePage(currentPage + 1)">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>            
+            </div>
+
         </div>
     </div>
 
@@ -214,7 +264,7 @@ app.component('patient-selector', {
         <div class="col-12">
             <h3>Select Patient</h3>
         </div>
-        <div class="col-12">
+        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
             <select class="form-select" v-model="selectedPatient">
                 <option value="">Select a patient</option>
                 <option v-for="patient in patients" v-bind:key="patient.id" v-bind:value="patient.id">
@@ -229,17 +279,17 @@ app.component('patient-selector', {
             <h3>Search Patients</h3>
         </div>
 
-        <div class="col-4">
+        <div class="col-md-12 col-lg-4">
             <label  class="form-label" for="patient-search-id">Search patient by "id":</label>
             <input class="form-control" v-model="searchTermById" v-on:input="updatePatientsByIdState" id="patient-search-id" v-bind:disabled="isIdInputDisabled" v-bind:placeholder="[ isIdInputDisabled ? 'Disabled input' : '']"/>     
         </div>
 
-        <div class="col-4">
+        <div class="col-md-12 col-lg-4">
             <label  class="form-label" for="patient-search-name">Search patient by "full name":</label>
             <input class="form-control" v-model="searchTermByFullName" v-on:input="updatePatientsByFullNameState" id="patient-search-name" v-bind:disabled="isFullNameInputDisabled" v-bind:placeholder="[ isFullNameInputDisabled ? 'Disabled input' : '']"/>
         </div>
 
-        <div class="col-4">
+        <div class="col-md-12 col-lg-4">
             <label  class="form-label" for="patient-search-phoneNumber">Search patient by "phone number":</label>
             <input class="form-control" v-model="searchTermByPhoneNumber" v-on:input="updatePatientsByPhoneNumberState" id="patient-search-phoneNumber" v-bind:disabled="isPhoneNumberInputDisabled" v-bind:placeholder="[ isPhoneNumberInputDisabled ? 'Disabled input' : '']"/>
         </div>
@@ -266,7 +316,7 @@ app.component('patient-selector', {
             </p>
       </div>
 
-      <div class="col-12 mt-4" v-else>
+      <div class="col-12 mt-4 table-responsive" v-else>
       <table class="table table-bordered" v-if="patientsByIdState || patientsByFullNameState || patientsByPhoneNumberState">
         <thead>
                 <tr>
@@ -275,7 +325,8 @@ app.component('patient-selector', {
                     <th>Birthday</th>
                     <th>Phone Number</th>
                     <th>Gender</th>                
-                    <th>Note</th>                
+                    <th>Note</th>
+                    <th>Select</th>            
                 </tr>
             </thead>
             <tbody>
@@ -286,6 +337,9 @@ app.component('patient-selector', {
                     <td>{{ patient.phone_number }}</td>
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.note }}</td>
+                    <td>
+                        <input class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
+                    </td>
                 </tr>
                 <tr v-else-if="patientsByFullNameState" v-for="patient in filteredPatientsByFullName">
                     <td>{{ patient.id }}</td>
@@ -294,6 +348,9 @@ app.component('patient-selector', {
                     <td>{{ patient.phone_number }}</td>
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.note }}</td>
+                    <td>
+                        <input class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
+                    </td>
                 </tr>
                 <tr v-else v-for="patient in filteredPatientsByPhoneNumber">
                     <td>{{ patient.id }}</td>
@@ -302,6 +359,9 @@ app.component('patient-selector', {
                     <td>{{ patient.phone_number }}</td>
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.note }}</td>
+                    <td>
+                        <input class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
+                    </td>
                 </tr>
             </tbody>
         </table>

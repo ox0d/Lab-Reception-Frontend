@@ -3,7 +3,9 @@ const app = Vue.createApp({
         return {
             backendBaseURL: 'http://127.0.0.1:8000',
 
-            isPatientComponentVisible: true,
+            action: '/barcode-generation',
+
+            isPatientComponentVisible: false,
             isNewPatientFormComponentVisible: false,
             isDoctorComponentVisible: false,
             isTestComponentVisible: false,
@@ -16,9 +18,54 @@ const app = Vue.createApp({
             selectedPatient: '',
             selectedDoctor: '',
             selectedTests: {},
+
+            newAppointment: {
+                patient_id: '',
+                doctor_id: '',
+                test_ids: [],
+                barcode: 'OGE568',
+            },
+
+            toastMessage: '',
         };
     },
     methods: {
+
+        submitForm: async function() {
+            try {
+                const response = await axios.post(this.backendBaseURL + this.action, this.newAppointment);
+
+                let responseObject = response.data;
+
+                console.log(responseObject);
+
+                if (responseObject.message == 'Appointment scheduled successfully') {
+                    
+                    // Clear newAppointment data
+                    this.newAppointment.patient_id = '';
+                    this.newAppointment.doctor_id = '';
+                    this.newAppointment.test_ids = [];
+                    this.newAppointment.barcode = 'OGE568';
+
+                    // Display success message to the user
+                    // console.log('Appointment scheduled successfully.');
+                    this.toastMessage = 'Appointment scheduled successfully.';
+
+                    // Handle the toast display
+                    var toast = new bootstrap.Toast(document.querySelector('.toast'));
+                    toast.show();
+
+                } else {
+                    // Display error message to the user
+                    alert(responseObject.error);
+                }
+            } catch (error) {
+                console.error(error);
+                // Display error message to the user
+                alert('An error occurred. Please try again later.');
+            }
+        },
+
         updatePatientComponentVisibilityState: function() {
             if (this.isPatientComponentVisible) {
                 this.isPatientComponentVisible = false;
@@ -53,10 +100,10 @@ const app = Vue.createApp({
         },
 
         addToSelectedPatient: function(selectedPatient) {
-            this.selectedPatient = selectedPatient;
+            this.newAppointment.patient_id = selectedPatient;
         },
         addToSelectedDoctor: function(selectedDoctor) {
-            this.selectedDoctor = selectedDoctor;
+            this.newAppointment.doctor_id = selectedDoctor;
         },
         addToSelectedTests: function(selectedTests) {
             const arrayWithDuplicates = selectedTests;
@@ -64,7 +111,15 @@ const app = Vue.createApp({
                 return self.indexOf(value) === index;
             });
 
-            this.selectedTests = uniqueArray;
-        },            
+            this.newAppointment.test_ids = uniqueArray;
+        }, 
+        
+        updateToastMessage: function(toastMessage) {
+            this.toastMessage = toastMessage;
+
+            // Handle the toast display
+            var toast = new bootstrap.Toast(document.querySelector('.toast'));
+            toast.show();
+        }
     },
 })
