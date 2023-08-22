@@ -37,6 +37,12 @@ app.component('patient-selector', {
 
             newPatientState: true,
             oldPatientid: 0,
+
+            formErrors: {
+                searchTermById: '',
+                searchTermByFullName: '',
+                searchTermByPhoneNumber: '',
+            },
         };
     },
     methods: {
@@ -52,6 +58,12 @@ app.component('patient-selector', {
         },
         
         updatePatientsByIdState: function() {
+            this.formErrors.searchTermById = '';
+            if (this.searchTermById && !/^\d+$/.test(this.searchTermById)) {
+                this.formErrors.searchTermById = 'Invalid ID format. Only digits are allowed.';
+                return;
+            }
+
             if (this.searchTermById == '') {
                 this.patientsByIdState = false;
 
@@ -69,6 +81,12 @@ app.component('patient-selector', {
         },
 
         updatePatientsByFullNameState: function() {
+            this.formErrors.searchTermByFullName = '';
+            if (this.searchTermByFullName && !/^[a-zA-Z\s]+$/.test(this.searchTermByFullName)) {
+                this.formErrors.searchTermByFullName = 'Invalid characters in Full Name.';
+                return;
+            }
+
             if (this.searchTermByFullName == '') {
                 this.patientsByFullNameState = false;
 
@@ -87,6 +105,12 @@ app.component('patient-selector', {
         },
 
         updatePatientsByPhoneNumberState: function() {
+            this.formErrors.searchTermByPhoneNumber = '';
+            if (this.searchTermByPhoneNumber && !/^[0-9]+$/.test(this.searchTermByPhoneNumber)) {
+                this.formErrors.searchTermByPhoneNumber = 'Phone Number should contain only digits.';
+                return;
+            }
+
             if (this.searchTermByPhoneNumber == '') {
                 this.patientsByPhoneNumberState = false;
 
@@ -286,17 +310,41 @@ app.component('patient-selector', {
 
         <div class="col-md-12 col-lg-4">
             <label  class="form-label" for="patient-search-id">Search patient by "id":</label>
-            <input class="form-control" v-model="searchTermById" v-on:input="updatePatientsByIdState" id="patient-search-id" v-bind:disabled="isIdInputDisabled" v-bind:placeholder="[ isIdInputDisabled ? 'Disabled input' : '']"/>     
+            <input 
+                class="form-control"
+                v-model="searchTermById"
+                v-on:input="updatePatientsByIdState"
+                id="patient-search-id"
+                v-bind:disabled="isIdInputDisabled"
+                v-bind:placeholder="[ isIdInputDisabled ? 'Disabled input' : '']"
+            />  
+            <small class="text-danger mb-4">{{ formErrors.searchTermById }}</small>   
         </div>
 
         <div class="col-md-12 col-lg-4">
             <label  class="form-label" for="patient-search-name">Search patient by "full name":</label>
-            <input class="form-control" v-model="searchTermByFullName" v-on:input="updatePatientsByFullNameState" id="patient-search-name" v-bind:disabled="isFullNameInputDisabled" v-bind:placeholder="[ isFullNameInputDisabled ? 'Disabled input' : '']"/>
+            <input 
+                class="form-control" 
+                v-model="searchTermByFullName" 
+                v-on:input="updatePatientsByFullNameState" 
+                id="patient-search-name" 
+                v-bind:disabled="isFullNameInputDisabled" 
+                v-bind:placeholder="[ isFullNameInputDisabled ? 'Disabled input' : '']"
+            />
+            <small class="text-danger">{{ formErrors.searchTermByFullName }}</small>
         </div>
 
         <div class="col-md-12 col-lg-4">
             <label  class="form-label" for="patient-search-phoneNumber">Search patient by "phone number":</label>
-            <input class="form-control" v-model="searchTermByPhoneNumber" v-on:input="updatePatientsByPhoneNumberState" id="patient-search-phoneNumber" v-bind:disabled="isPhoneNumberInputDisabled" v-bind:placeholder="[ isPhoneNumberInputDisabled ? 'Disabled input' : '']"/>
+            <input 
+                class="form-control" 
+                v-model="searchTermByPhoneNumber" 
+                v-on:input="updatePatientsByPhoneNumberState" 
+                id="patient-search-phoneNumber" 
+                v-bind:disabled="isPhoneNumberInputDisabled" 
+                v-bind:placeholder="[ isPhoneNumberInputDisabled ? 'Disabled input' : '']"
+            />
+            <small class="text-danger">{{ formErrors.searchTermByPhoneNumber }}</small>
         </div>
 
         <div class="col-12 mt-2" v-if="addNewPatientState">

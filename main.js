@@ -35,8 +35,9 @@ const app = Vue.createApp({
         submitForm: async function() {
             // Reset component visibility state
             this.updateTestComponentVisibilityState();
-                
+            
             try {
+                this.isBarcodeContainerVisible = false;
                 // Generate a random unique barcode
                 this.newAppointment.barcode = this.generateRandomBarcode();
                 this.updateBarcodeContainerVisibilityState();
@@ -113,7 +114,6 @@ const app = Vue.createApp({
                 return;
             }
             this.isBarcodeContainerVisible = true;
-            console.log("true");
         },
 
         updateNewPatientId: function(id) {
