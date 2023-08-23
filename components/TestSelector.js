@@ -87,13 +87,13 @@ app.component('test-selector', {
                         <td v-if="test.test_category_id == testCategorie.id">{{test.id}}</td>
                         <td v-if="test.test_category_id == testCategorie.id">{{test.name}}</td>
                         <td v-if="test.test_category_id == testCategorie.id">
-                            <input class="form-check-input" type="checkbox" v-model="selectedTests" v-bind:value="test.id">
+                            <input v-bind:id="test.name" class="form-check-input" type="checkbox" v-model="selectedTests" v-bind:value="test.id">
                         </td>
                     </tr>
 
                     <tr>
                         <td colspan="3" class="text-center">
-                            <input class="form-check-input" type="checkbox" v-model="categories[testCategorie.name]" @change="toggleSelectAll(testCategorie.name)">
+                            <input v-bind:id="testCategorie.id" class="form-check-input" type="checkbox" v-model="categories[testCategorie.name]" @change="toggleSelectAll(testCategorie.name)">
                             Select All
                         </td>
                     </tr>

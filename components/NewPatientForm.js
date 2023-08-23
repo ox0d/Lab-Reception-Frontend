@@ -114,12 +114,12 @@ app.component('new-patient-form', {
     <div class="col-12">
       <form @submit.prevent="submitForm" ref="form">
         <div class="row">
-          <div class="col-sm-12 col-md-8 mb-3">
+          <div class="col-12 col-sm-8 mb-3">
             <label for="full_name" class="form-label">Full Name</label>
             <input v-model="newPatient.full_name" type="text" class="form-control" id="full_name">
             <small class="text-danger">{{ formErrors.full_name }}</small>
           </div>
-          <div class="col-sm-12 col-md-4 mb-3">
+          <div class="col-12 col-sm-4 mb-3">
             <label for="birthday_date" class="form-label">Birthday Date</label>
             <input v-model="newPatient.birthday_date" type="date" class="form-control" id="birthday_date">
             <small class="text-danger">{{ formErrors.birthday_date }}</small>
@@ -127,12 +127,12 @@ app.component('new-patient-form', {
         </div>
         
         <div class="row">
-          <div class="col-sm-12 col-md-8 mb-3">
+          <div class="col-12 col-sm-8 mb-3">
             <label for="phone_number" class="form-label">Phone Number</label>
             <input v-model="newPatient.phone_number" type="tel" class="form-control" id="phone_number">
             <small class="text-danger">{{ formErrors.phone_number }}</small>
           </div>
-          <div class="col-sm-12 col-md-4 mb-3">
+          <div class="col-12 col-sm-4 mb-3">
             <label for="gender" class="form-label">Gender</label>
             <select v-model="newPatient.gender" class="form-select" id="gender">
               <option value="male">Male</option>

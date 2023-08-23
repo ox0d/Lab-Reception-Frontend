@@ -3,7 +3,7 @@ app.component('doctor-selector', {
         baseurl: {
             type: String,
             required: true,
-        }
+        },
     },
     emits: ['selected-doctor'],
     data: function() {
@@ -47,6 +47,10 @@ app.component('doctor-selector', {
             } catch (error) {
             console.error('Error fetching doctors:', error);
             }
+        },
+
+        resetSelectedDoctor: function() {
+            this.selectedDoctor = ''; // Reset selected doctor when called
         },
         
         updateDoctorsByIdState: function() {
@@ -257,8 +261,8 @@ app.component('doctor-selector', {
         <div class="col-12">
             <h3>Select Doctor</h3>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
-            <select class="form-select" v-model="selectedDoctor">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <select class="form-select" v-model="selectedDoctor" id="selectedDoctor1">
                 <option value="">Select a doctor</option>
                 <option v-for="doctor in doctors" :key="doctor.id" :value="doctor.id">
                     {{ doctor.full_name }}
@@ -272,7 +276,7 @@ app.component('doctor-selector', {
             <h3>Search Doctors</h3>
         </div>
 
-        <div class="col-md-12 col-lg-4">
+        <div class="col-12 col-sm-6 col-lg-4">
             <label class="form-label" for="doctor-search-id">Search doctor by "id":</label>
             <input
                 class="form-control"
@@ -285,7 +289,7 @@ app.component('doctor-selector', {
             <small class="text-danger mb-4">{{ formErrors.searchTermById }}</small>
         </div>
 
-        <div class="col-md-12 col-lg-4">
+        <div class="col-12 col-sm-6 col-lg-4">
             <label class="form-label" for="doctor-search-name">Search doctor by "full name":</label>
             <input
                 class="form-control"
@@ -298,7 +302,7 @@ app.component('doctor-selector', {
             <small class="text-danger">{{ formErrors.searchTermByFullName }}</small>
         </div>
 
-            <div class="col-md-12 col-lg-4">
+            <div class="col-12 col-sm-6 col-lg-4">
             <label class="form-label" for="doctor-search-phoneNumber">Search doctor by "phone number":</label>
             <input
                 class="form-control"
@@ -343,7 +347,7 @@ app.component('doctor-selector', {
                     <td>{{ doctor.full_name }}</td>
                     <td>{{ doctor.phone_number }}</td>
                     <td>
-                        <input class="form-check-input" type="radio" name="selectDoctor" v-bind:value="doctor.id" v-model="selectedDoctor">                        
+                        <input id="doctor.id" class="form-check-input" type="radio" name="selectDoctor" v-bind:value="doctor.id" v-model="selectedDoctor">                        
                     </td>
                 </tr>
                 <tr v-else-if="doctorsByFullNameState" v-for="doctor in filteredDoctorsByFullName">
@@ -351,7 +355,7 @@ app.component('doctor-selector', {
                     <td>{{ doctor.full_name }}</td>
                     <td>{{ doctor.phone_number }}</td>
                     <td>
-                        <input class="form-check-input" type="radio" name="selectDoctor" v-bind:value="doctor.id" v-model="selectedDoctor">                        
+                        <input id="doctor.id" class="form-check-input" type="radio" name="selectDoctor" v-bind:value="doctor.id" v-model="selectedDoctor">                        
                     </td>
                 </tr>
                 <tr v-else v-for="doctor in filteredDoctorsByPhoneNumber">
@@ -359,7 +363,7 @@ app.component('doctor-selector', {
                     <td>{{ doctor.full_name }}</td>
                     <td>{{ doctor.phone_number }}</td>
                     <td>
-                        <input class="form-check-input" type="radio" name="selectDoctor" v-bind:value="doctor.id" v-model="selectedDoctor">                        
+                        <input id="doctor.id" class="form-check-input" type="radio" name="selectDoctor" v-bind:value="doctor.id" v-model="selectedDoctor">                        
                     </td>
                 </tr>
             </tbody>

@@ -28,6 +28,7 @@ const app = Vue.createApp({
             },
 
             toastMessage: '',
+            
         };
     },
     methods: {
@@ -67,6 +68,8 @@ const app = Vue.createApp({
                     var toast = new bootstrap.Toast(document.querySelector('.toast'));
                     toast.show();
 
+                    this.$refs.doctorSelector.resetSelectedDoctor();
+                    this.$refs.patientSelector.resetSelectedPatient();
                 } else {
                     // Display error message to the user
                     alert(responseObject.error);

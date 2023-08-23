@@ -23,6 +23,9 @@
     <div id="id">
         <!-- Bootstrap -->
         <div class="container-lg">
+
+            <!-- Nav-bar component -->
+            <!-- <nav-bar class="mb-4"></nav-bar> -->
             
             <!-- Patient-selector component -->
             <div class="row border border-1 shadow-sm rounded p-4 my-4">
@@ -31,7 +34,7 @@
                     <button class="btn" v-on:click="updatePatientComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
                 </div>
                 <div class="col-12" v-show="isPatientComponentVisible">                    
-                    <patient-selector v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true" v-on:selected-patient="addToSelectedPatient"></patient-selector>
+                    <patient-selector ref="patientSelector" v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true" v-on:selected-patient="addToSelectedPatient"></patient-selector>
                 </div>
             </div>
 
@@ -53,7 +56,7 @@
                     <button class="btn" v-on:click="updateDoctorComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isDoctorComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
                 </div>
                 <div class="col-12" v-show="isDoctorComponentVisible">                    
-                    <doctor-selector v-bind:baseurl="backendBaseURL" v-on:selected-doctor="addToSelectedDoctor"></doctor-selector>
+                    <doctor-selector ref="doctorSelector" v-bind:baseurl="backendBaseURL" v-on:selected-doctor="addToSelectedDoctor"></doctor-selector>
                 </div>
             </div>
 
@@ -124,6 +127,7 @@
     <script src="./main.js"></script>
 
     <!-- Import Vue Components -->
+    <script src="./components/NavBar.js"></script>
     <script src="./components/PatientSelector.js"></script>
     <script src="./components/NewPatientForm.js"></script>
     <script src="./components/DoctorSelector.js"></script>

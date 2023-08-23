@@ -56,6 +56,10 @@ app.component('patient-selector', {
                 console.error('Error fetching patients:', error);
             }
         },
+
+        resetSelectedPatient: function() {
+            this.selectedPatient = ''; // Reset selected patient when called
+        },
         
         updatePatientsByIdState: function() {
             this.formErrors.searchTermById = '';
@@ -293,8 +297,8 @@ app.component('patient-selector', {
         <div class="col-12">
             <h3>Select Patient</h3>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4">
-            <select class="form-select" v-model="selectedPatient">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <select class="form-select" v-model="selectedPatient" id="selectedPatient1">
                 <option value="">Select a patient</option>
                 <option v-for="patient in patients" v-bind:key="patient.id" v-bind:value="patient.id">
                     {{ patient.full_name }}
@@ -308,7 +312,7 @@ app.component('patient-selector', {
             <h3>Search Patients</h3>
         </div>
 
-        <div class="col-md-12 col-lg-4">
+        <div class="ccol-12 col-sm-6 col-lg-4">
             <label  class="form-label" for="patient-search-id">Search patient by "id":</label>
             <input 
                 class="form-control"
@@ -321,7 +325,7 @@ app.component('patient-selector', {
             <small class="text-danger mb-4">{{ formErrors.searchTermById }}</small>   
         </div>
 
-        <div class="col-md-12 col-lg-4">
+        <div class="ccol-12 col-sm-6 col-lg-4">
             <label  class="form-label" for="patient-search-name">Search patient by "full name":</label>
             <input 
                 class="form-control" 
@@ -334,7 +338,7 @@ app.component('patient-selector', {
             <small class="text-danger">{{ formErrors.searchTermByFullName }}</small>
         </div>
 
-        <div class="col-md-12 col-lg-4">
+        <div class="ccol-12 col-sm-6 col-lg-4">
             <label  class="form-label" for="patient-search-phoneNumber">Search patient by "phone number":</label>
             <input 
                 class="form-control" 
@@ -391,7 +395,7 @@ app.component('patient-selector', {
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.note }}</td>
                     <td>
-                        <input class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
+                        <input id="patient.id" class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
                     </td>
                 </tr>
                 <tr v-else-if="patientsByFullNameState" v-for="patient in filteredPatientsByFullName">
@@ -402,7 +406,7 @@ app.component('patient-selector', {
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.note }}</td>
                     <td>
-                        <input class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
+                        <input id="patient.id" class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
                     </td>
                 </tr>
                 <tr v-else v-for="patient in filteredPatientsByPhoneNumber">
@@ -413,7 +417,7 @@ app.component('patient-selector', {
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.note }}</td>
                     <td>
-                        <input class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
+                        <input id="patient.id" class="form-check-input" type="radio" name="selectPatient" v-bind:value="patient.id" v-model="selectedPatient">                        
                     </td>
                 </tr>
             </tbody>
