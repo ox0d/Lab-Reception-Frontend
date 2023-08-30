@@ -1,217 +1,226 @@
-app.component('doctor-selector', {
-    props: {
-        baseurl: {
-            type: String,
-            required: true,
-        },
+app.component("doctor-selector", {
+  props: {
+    baseurl: {
+      type: String,
+      required: true,
     },
-    emits: ['selected-doctor'],
-    data: function() {
-        return {
-            action: '/doctors',
-            
-            doctors: [], // Array to store fetched doctors
-            selectedDoctor: '',
+  },
+  emits: ["selected-doctor"],
+  data: function () {
+    return {
+      action: "/doctors",
 
-            pageSize: 5, // Number of rows per page
-            currentPage: 1, // Current page number
-            
-            searchTermById: '',
-            searchTermByFullName: '',
-            searchTermByPhoneNumber: '',
+      doctors: [], // Array to store fetched doctors
+      selectedDoctor: "",
 
-            doctorsByIdState: false,
-            doctorsByFullNameState: false,
-            doctorsByPhoneNumberState: false,
+      pageSize: 5, // Number of rows per page
+      currentPage: 1, // Current page number
 
-            isIdInputDisabled: false,
-            isFullNameInputDisabled: false,
-            isPhoneNumberInputDisabled: false,
+      searchTermById: "",
+      searchTermByFullName: "",
+      searchTermByPhoneNumber: "",
 
-            addNewDoctorState: false,
+      doctorsByIdState: false,
+      doctorsByFullNameState: false,
+      doctorsByPhoneNumberState: false,
 
-            formErrors: {
-                searchTermById: '',
-                searchTermByFullName: '',
-                searchTermByPhoneNumber: '',
-            },
-        };
-    },
-    methods: {
-        fetchDoctors: async function() {
-            try {
-            const response = await axios.get(this.baseurl + this.action);
+      isIdInputDisabled: false,
+      isFullNameInputDisabled: false,
+      isPhoneNumberInputDisabled: false,
 
-            // Processing doctor data as needed
-            this.doctors = response.data;
-            } catch (error) {
-            console.error('Error fetching doctors:', error);
-            }
-        },
+      addNewDoctorState: false,
 
-        resetSelectedDoctor: function() {
-            this.selectedDoctor = ''; // Reset selected doctor when called
-        },
-        
-        updateDoctorsByIdState: function() {
-            this.formErrors.searchTermById = '';
-            if (this.searchTermById && !/^\d+$/.test(this.searchTermById)) {
-                this.formErrors.searchTermById = 'Invalid ID format. Only digits are allowed.';
-                return;
-            }
-
-            if (this.searchTermById == '') {
-                this.doctorsByIdState = false;
-
-                // Update each input disabled state
-                this.isFullNameInputDisabled = false;
-                this.isPhoneNumberInputDisabled = false;
-
-                return;
-            }
-            this.doctorsByIdState = true;
-
-            // Update each input disabled state
-            this.isFullNameInputDisabled = true;
-            this.isPhoneNumberInputDisabled = true;
-        },
-        
-        updateDoctorsByFullNameState: function() {
-            this.formErrors.searchTermByFullName = '';
-            if (this.searchTermByFullName && !/^[a-zA-Z\s]+$/.test(this.searchTermByFullName)) {
-                this.formErrors.searchTermByFullName = 'Invalid characters in Full Name.';
-                return;
-            }
-
-            if (this.searchTermByFullName == '') {
-                this.doctorsByFullNameState = false;
-
-                // Update each input disabled state
-                this.isIdInputDisabled = false;
-                this.isPhoneNumberInputDisabled = false;
-
-                return;
-            }
-            
-            this.doctorsByFullNameState = true;
-
-            // Update each input disabled state
-            this.isIdInputDisabled = true;
-            this.isPhoneNumberInputDisabled = true;
-        },
-
-        updateDoctorsByPhoneNumberState: function() {
-            this.formErrors.searchTermByPhoneNumber = '';
-            if (this.searchTermByPhoneNumber && !/^[0-9]+$/.test(this.searchTermByPhoneNumber)) {
-                this.formErrors.searchTermByPhoneNumber = 'Phone Number should contain only digits.';
-                return;
-            }
-            
-            if (this.searchTermByPhoneNumber == '') {
-                this.doctorsByPhoneNumberState = false;
-
-                // Update each input disabled state
-                this.isIdInputDisabled = false;
-                this.isFullNameInputDisabled = false;
-
-                return;
-            }
-
-            this.doctorsByPhoneNumberState = true;
-
-            // Update each input disabled state
-            this.isIdInputDisabled = true;
-            this.isFullNameInputDisabled = true;
-        },
-
-        changePage: function(pageNumber) {
-            if (pageNumber >= 1 && pageNumber <= this.pageCount) {
-                this.currentPage = pageNumber;
-            }
-        }
+      formErrors: {
+        searchTermById: "",
+        searchTermByFullName: "",
+        searchTermByPhoneNumber: "",
       },
-      computed: {
-        filteredDoctorsById: function() {
-            if (this.searchTermById === '') {
-                return []; // Return an empty array when no search term is entered
-            }
-          
-            const searchTerm = this.searchTermById;
-            const filteredDoctors = this.doctors.filter(doctor => {
-              return doctor.id.toString().includes(searchTerm.trim());
-            });
-          
-            if (filteredDoctors.length === 0) {
-                this.addNewDoctorState = true;
-                return;
-            }          
-            
-            this.addNewDoctorState = false;
-            return filteredDoctors; // Return the filtered array
-        },  
+    };
+  },
+  methods: {
+    fetchDoctors: async function () {
+      try {
+        const response = await axios.get(this.baseurl + this.action);
 
-        filteredDoctorsByFullName: function() {
-            if (this.searchTermByFullName === '') {
-                return []; // Return an empty array when no search term is entered
-            }
-
-            const searchTerm = this.searchTermByFullName.toLowerCase();
-            const filteredDoctors =  this.doctors.filter(doctor => {
-                return doctor.full_name.toLowerCase().includes(searchTerm.trim());
-            });
-
-            if (filteredDoctors.length === 0) {
-                this.addNewDoctorState = true;
-                return;
-            }
-                      
-            this.addNewDoctorState = false;
-            return filteredDoctors; // Return the filtered array
-        },
-
-        filteredDoctorsByPhoneNumber: function() {
-            if (this.searchTermByPhoneNumber === '') {
-                return []; // Return an empty array when no search term is entered
-            }
-
-            const searchTerm = this.searchTermByPhoneNumber;
-            const filteredDoctors =  this.doctors.filter(doctor => {
-                return doctor.phone_number.includes(searchTerm.trim());
-            });
-
-            if (filteredDoctors.length === 0) {
-                this.addNewDoctorState = true;
-                return;
-            }
-                      
-            this.addNewDoctorState = false;
-            return filteredDoctors; // Return the filtered array
-        },
-
-        pageCount: function() {
-            return Math.ceil(this.doctors.length / this.pageSize);
-        },
-
-        displayedDoctors: function() {
-            const startIndex = (this.currentPage - 1) * this.pageSize;
-            const endIndex = startIndex + this.pageSize;
-            return this.doctors.slice(startIndex, endIndex);
-        }
+        // Processing doctor data as needed
+        this.doctors = response.data;
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
     },
 
-    updated: function() {
-        if (this.selectedDoctor == '') {
-            this.$emit('selected-doctor', '');
-            return;
-        }
-        this.$emit('selected-doctor', this.selectedDoctor);
+    resetSelectedDoctor: function () {
+      this.selectedDoctor = ""; // Reset selected doctor when called
     },
 
-    mounted: function() {
+    updateDoctorsByIdState: function () {
+      this.formErrors.searchTermById = "";
+      if (this.searchTermById && !/^\d+$/.test(this.searchTermById)) {
+        this.formErrors.searchTermById =
+          "Invalid ID format. Only digits are allowed.";
+        return;
+      }
+
+      if (this.searchTermById == "") {
+        this.doctorsByIdState = false;
+
+        // Update each input disabled state
+        this.isFullNameInputDisabled = false;
+        this.isPhoneNumberInputDisabled = false;
+
+        return;
+      }
+      this.doctorsByIdState = true;
+
+      // Update each input disabled state
+      this.isFullNameInputDisabled = true;
+      this.isPhoneNumberInputDisabled = true;
+    },
+
+    updateDoctorsByFullNameState: function () {
+      this.formErrors.searchTermByFullName = "";
+      if (
+        this.searchTermByFullName &&
+        !/^[a-zA-Z\s]+$/.test(this.searchTermByFullName)
+      ) {
+        this.formErrors.searchTermByFullName =
+          "Invalid characters in Full Name.";
+        return;
+      }
+
+      if (this.searchTermByFullName == "") {
+        this.doctorsByFullNameState = false;
+
+        // Update each input disabled state
+        this.isIdInputDisabled = false;
+        this.isPhoneNumberInputDisabled = false;
+
+        return;
+      }
+
+      this.doctorsByFullNameState = true;
+
+      // Update each input disabled state
+      this.isIdInputDisabled = true;
+      this.isPhoneNumberInputDisabled = true;
+    },
+
+    updateDoctorsByPhoneNumberState: function () {
+      this.formErrors.searchTermByPhoneNumber = "";
+      if (
+        this.searchTermByPhoneNumber &&
+        !/^[0-9]+$/.test(this.searchTermByPhoneNumber)
+      ) {
+        this.formErrors.searchTermByPhoneNumber =
+          "Phone Number should contain only digits.";
+        return;
+      }
+
+      if (this.searchTermByPhoneNumber == "") {
+        this.doctorsByPhoneNumberState = false;
+
+        // Update each input disabled state
+        this.isIdInputDisabled = false;
+        this.isFullNameInputDisabled = false;
+
+        return;
+      }
+
+      this.doctorsByPhoneNumberState = true;
+
+      // Update each input disabled state
+      this.isIdInputDisabled = true;
+      this.isFullNameInputDisabled = true;
+    },
+
+    changePage: function (pageNumber) {
+      if (pageNumber >= 1 && pageNumber <= this.pageCount) {
+        this.currentPage = pageNumber;
+      }
+    },
+  },
+  computed: {
+    filteredDoctorsById: function () {
+      if (this.searchTermById === "") {
+        return []; // Return an empty array when no search term is entered
+      }
+
+      const searchTerm = this.searchTermById;
+      const filteredDoctors = this.doctors.filter((doctor) => {
+        return doctor.id.toString().includes(searchTerm.trim());
+      });
+
+      if (filteredDoctors.length === 0) {
+        this.addNewDoctorState = true;
+        return;
+      }
+
+      this.addNewDoctorState = false;
+      return filteredDoctors; // Return the filtered array
+    },
+
+    filteredDoctorsByFullName: function () {
+      if (this.searchTermByFullName === "") {
+        return []; // Return an empty array when no search term is entered
+      }
+
+      const searchTerm = this.searchTermByFullName.toLowerCase();
+      const filteredDoctors = this.doctors.filter((doctor) => {
+        return doctor.full_name.toLowerCase().includes(searchTerm.trim());
+      });
+
+      if (filteredDoctors.length === 0) {
+        this.addNewDoctorState = true;
+        return;
+      }
+
+      this.addNewDoctorState = false;
+      return filteredDoctors; // Return the filtered array
+    },
+
+    filteredDoctorsByPhoneNumber: function () {
+      if (this.searchTermByPhoneNumber === "") {
+        return []; // Return an empty array when no search term is entered
+      }
+
+      const searchTerm = this.searchTermByPhoneNumber;
+      const filteredDoctors = this.doctors.filter((doctor) => {
+        return doctor.phone_number.includes(searchTerm.trim());
+      });
+
+      if (filteredDoctors.length === 0) {
+        this.addNewDoctorState = true;
+        return;
+      }
+
+      this.addNewDoctorState = false;
+      return filteredDoctors; // Return the filtered array
+    },
+
+    pageCount: function () {
+      return Math.ceil(this.doctors.length / this.pageSize);
+    },
+
+    displayedDoctors: function () {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.doctors.slice(startIndex, endIndex);
+    },
+  },
+
+  updated: function () {
+    if (this.selectedDoctor == "") {
+      this.$emit("selected-doctor", "");
+      return;
+    }
+    this.$emit("selected-doctor", this.selectedDoctor);
+  },
+
+  mounted: function () {
     this.fetchDoctors(); // Fetch doctors when component is mounted
-    },
+  },
 
-    template:
+  template:
     /*html*/
     `
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">

@@ -1,247 +1,255 @@
-app.component('patient-selector', {
-    props: {
-        baseurl: {
-            type: String,
-            required: true,
-        },
-        newpatientid: {
-            type: Number,
-            required: true,
-            default: 0,
-        }
+app.component("patient-selector", {
+  props: {
+    baseurl: {
+      type: String,
+      required: true,
     },
-    emits: ['show-patient-form', 'selected-patient'],
-    data: function() {
-        return {
-            action: '/patients',
-            
-            patients: [], // Array to store fetched patients
-            selectedPatient: '',
-
-            pageSize: 5, // Number of rows per page
-            currentPage: 1, // Current page number
-            
-            searchTermById: '',
-            searchTermByFullName: '',
-            searchTermByPhoneNumber: '',
-
-            patientsByIdState: false,
-            patientsByFullNameState: false,
-            patientsByPhoneNumberState: false,
-
-            isIdInputDisabled: false,
-            isFullNameInputDisabled: false,
-            isPhoneNumberInputDisabled: false,
-
-            addNewPatientState: false,
-
-            newPatientState: true,
-            oldPatientid: 0,
-
-            formErrors: {
-                searchTermById: '',
-                searchTermByFullName: '',
-                searchTermByPhoneNumber: '',
-            },
-        };
+    newpatientid: {
+      type: Number,
+      required: true,
+      default: 0,
     },
-    methods: {
-        fetchPatients: async function() {
-            try {
-                const response = await axios.get(this.baseurl + this.action);
+  },
+  emits: ["show-patient-form", "selected-patient"],
+  data: function () {
+    return {
+      action: "/patients",
 
-                // Processing patient data as needed
-                this.patients = response.data;
-            } catch (error) {
-                console.error('Error fetching patients:', error);
-            }
-        },
+      patients: [], // Array to store fetched patients
+      selectedPatient: "",
 
-        resetSelectedPatient: function() {
-            this.selectedPatient = ''; // Reset selected patient when called
-        },
-        
-        updatePatientsByIdState: function() {
-            this.formErrors.searchTermById = '';
-            if (this.searchTermById && !/^\d+$/.test(this.searchTermById)) {
-                this.formErrors.searchTermById = 'Invalid ID format. Only digits are allowed.';
-                return;
-            }
+      pageSize: 5, // Number of rows per page
+      currentPage: 1, // Current page number
 
-            if (this.searchTermById == '') {
-                this.patientsByIdState = false;
+      searchTermById: "",
+      searchTermByFullName: "",
+      searchTermByPhoneNumber: "",
 
-                // Update each input disabled state
-                this.isFullNameInputDisabled = false;
-                this.isPhoneNumberInputDisabled = false;
+      patientsByIdState: false,
+      patientsByFullNameState: false,
+      patientsByPhoneNumberState: false,
 
-                return;
-            }
-            this.patientsByIdState = true;
+      isIdInputDisabled: false,
+      isFullNameInputDisabled: false,
+      isPhoneNumberInputDisabled: false,
 
-            // Update each input disabled state
-            this.isFullNameInputDisabled = true;
-            this.isPhoneNumberInputDisabled = true;
-        },
+      addNewPatientState: false,
 
-        updatePatientsByFullNameState: function() {
-            this.formErrors.searchTermByFullName = '';
-            if (this.searchTermByFullName && !/^[a-zA-Z\s]+$/.test(this.searchTermByFullName)) {
-                this.formErrors.searchTermByFullName = 'Invalid characters in Full Name.';
-                return;
-            }
+      newPatientState: true,
+      oldPatientid: 0,
 
-            if (this.searchTermByFullName == '') {
-                this.patientsByFullNameState = false;
-
-                // Update each input disabled state
-                this.isIdInputDisabled = false;
-                this.isPhoneNumberInputDisabled = false;
-
-                return;
-            }
-            
-            this.patientsByFullNameState = true;
-
-            // Update each input disabled state
-            this.isIdInputDisabled = true;
-            this.isPhoneNumberInputDisabled = true;
-        },
-
-        updatePatientsByPhoneNumberState: function() {
-            this.formErrors.searchTermByPhoneNumber = '';
-            if (this.searchTermByPhoneNumber && !/^[0-9]+$/.test(this.searchTermByPhoneNumber)) {
-                this.formErrors.searchTermByPhoneNumber = 'Phone Number should contain only digits.';
-                return;
-            }
-
-            if (this.searchTermByPhoneNumber == '') {
-                this.patientsByPhoneNumberState = false;
-
-                // Update each input disabled state
-                this.isIdInputDisabled = false;
-                this.isFullNameInputDisabled = false;
-
-                return;
-            }
-
-            this.patientsByPhoneNumberState = true;
-
-            // Update each input disabled state
-            this.isIdInputDisabled = true;
-            this.isFullNameInputDisabled = true;
-        },
-
-        changePage: function(pageNumber) {
-            if (pageNumber >= 1 && pageNumber <= this.pageCount) {
-                this.currentPage = pageNumber;
-            }
-        },
-
-        showNewPatientForm: function() {
-            // Show form for adding a new patient
-            this.$emit('show-patient-form');
-        },
+      formErrors: {
+        searchTermById: "",
+        searchTermByFullName: "",
+        searchTermByPhoneNumber: "",
       },
-      computed: {
-        filteredPatientsById: function() {
-            if (this.searchTermById === '') {
-                return []; // Return an empty array when no search term is entered
-            }
-          
-            const searchTerm = this.searchTermById;
-            const filteredPatients = this.patients.filter(patient => {
-              return patient.id.toString().includes(searchTerm.trim());
-            });
-          
-            if (filteredPatients.length === 0) {
-                this.addNewPatientState = true;
-                return;
-            }          
-            
-            this.addNewPatientState = false;
-            return filteredPatients; // Return the filtered array
-        },   
+    };
+  },
+  methods: {
+    fetchPatients: async function () {
+      try {
+        const response = await axios.get(this.baseurl + this.action);
 
-        filteredPatientsByFullName: function() {
-            if (this.searchTermByFullName === '') {
-                return []; // Return an empty array when no search term is entered
-            }
-
-            const searchTerm = this.searchTermByFullName.toLowerCase();
-            const filteredPatients =  this.patients.filter(patient => {
-                return patient.full_name.toLowerCase().includes(searchTerm.trim());
-            });
-
-            if (filteredPatients.length === 0) {
-                this.addNewPatientState = true;
-                return;
-            }
-                      
-            this.addNewPatientState = false;
-            return filteredPatients; // Return the filtered array
-        },
-
-        filteredPatientsByPhoneNumber: function() {
-            if (this.searchTermByPhoneNumber === '') {
-                return []; // Return an empty array when no search term is entered
-            }
-
-            const searchTerm = this.searchTermByPhoneNumber;
-            const filteredPatients =  this.patients.filter(patient => {
-                return patient.phone_number.includes(searchTerm.trim());
-            });
-
-            if (filteredPatients.length === 0) {
-                this.addNewPatientState = true;
-                return;
-            }
-                      
-            this.addNewPatientState = false;
-            return filteredPatients; // Return the filtered array
-        },
-
-        pageCount: function() {
-            return Math.ceil(this.patients.length / this.pageSize);
-        },
-        
-        displayedPatients: function() {
-            const startIndex = (this.currentPage - 1) * this.pageSize;
-            const endIndex = startIndex + this.pageSize;
-            return this.patients.slice(startIndex, endIndex);
-        }
+        // Processing patient data as needed
+        this.patients = response.data;
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
     },
 
-    updated: function() {
-        
-        if (this.selectedPatient == '' && this.newpatientid <= 0) {
-            this.$emit('selected-patient', '');
-            return;
-        } else {
-            this.$emit('selected-patient', this.selectedPatient);
-        }
-
-        if (this.newpatientid != this.oldPatientid) {
-            this.newPatientState = true;
-        }
-
-        if (this.newpatientid > 0 && this.newPatientState == true) {
-            this.oldPatientid = this.newpatientid;
-
-            this.fetchPatients();
-            
-            this.selectedPatient = this.newpatientid; // Automatically select the new patient
-            this.$emit('selected-patient', this.newpatientid);
-
-            this.newPatientState = false;
-        }
+    resetSelectedPatient: function () {
+      this.selectedPatient = ""; // Reset selected patient when called
     },
 
-    mounted: function() {
-        this.fetchPatients(); // Fetch patients when component is mounted
+    updatePatientsByIdState: function () {
+      this.formErrors.searchTermById = "";
+      if (this.searchTermById && !/^\d+$/.test(this.searchTermById)) {
+        this.formErrors.searchTermById =
+          "Invalid ID format. Only digits are allowed.";
+        return;
+      }
+
+      if (this.searchTermById == "") {
+        this.patientsByIdState = false;
+
+        // Update each input disabled state
+        this.isFullNameInputDisabled = false;
+        this.isPhoneNumberInputDisabled = false;
+
+        return;
+      }
+      this.patientsByIdState = true;
+
+      // Update each input disabled state
+      this.isFullNameInputDisabled = true;
+      this.isPhoneNumberInputDisabled = true;
     },
 
-    template:
+    updatePatientsByFullNameState: function () {
+      this.formErrors.searchTermByFullName = "";
+      if (
+        this.searchTermByFullName &&
+        !/^[a-zA-Z\s]+$/.test(this.searchTermByFullName)
+      ) {
+        this.formErrors.searchTermByFullName =
+          "Invalid characters in Full Name.";
+        return;
+      }
+
+      if (this.searchTermByFullName == "") {
+        this.patientsByFullNameState = false;
+
+        // Update each input disabled state
+        this.isIdInputDisabled = false;
+        this.isPhoneNumberInputDisabled = false;
+
+        return;
+      }
+
+      this.patientsByFullNameState = true;
+
+      // Update each input disabled state
+      this.isIdInputDisabled = true;
+      this.isPhoneNumberInputDisabled = true;
+    },
+
+    updatePatientsByPhoneNumberState: function () {
+      this.formErrors.searchTermByPhoneNumber = "";
+      if (
+        this.searchTermByPhoneNumber &&
+        !/^[0-9]+$/.test(this.searchTermByPhoneNumber)
+      ) {
+        this.formErrors.searchTermByPhoneNumber =
+          "Phone Number should contain only digits.";
+        return;
+      }
+
+      if (this.searchTermByPhoneNumber == "") {
+        this.patientsByPhoneNumberState = false;
+
+        // Update each input disabled state
+        this.isIdInputDisabled = false;
+        this.isFullNameInputDisabled = false;
+
+        return;
+      }
+
+      this.patientsByPhoneNumberState = true;
+
+      // Update each input disabled state
+      this.isIdInputDisabled = true;
+      this.isFullNameInputDisabled = true;
+    },
+
+    changePage: function (pageNumber) {
+      if (pageNumber >= 1 && pageNumber <= this.pageCount) {
+        this.currentPage = pageNumber;
+      }
+    },
+
+    showNewPatientForm: function () {
+      // Show form for adding a new patient
+      this.$emit("show-patient-form");
+    },
+  },
+  computed: {
+    filteredPatientsById: function () {
+      if (this.searchTermById === "") {
+        return []; // Return an empty array when no search term is entered
+      }
+
+      const searchTerm = this.searchTermById;
+      const filteredPatients = this.patients.filter((patient) => {
+        return patient.id.toString().includes(searchTerm.trim());
+      });
+
+      if (filteredPatients.length === 0) {
+        this.addNewPatientState = true;
+        return;
+      }
+
+      this.addNewPatientState = false;
+      return filteredPatients; // Return the filtered array
+    },
+
+    filteredPatientsByFullName: function () {
+      if (this.searchTermByFullName === "") {
+        return []; // Return an empty array when no search term is entered
+      }
+
+      const searchTerm = this.searchTermByFullName.toLowerCase();
+      const filteredPatients = this.patients.filter((patient) => {
+        return patient.full_name.toLowerCase().includes(searchTerm.trim());
+      });
+
+      if (filteredPatients.length === 0) {
+        this.addNewPatientState = true;
+        return;
+      }
+
+      this.addNewPatientState = false;
+      return filteredPatients; // Return the filtered array
+    },
+
+    filteredPatientsByPhoneNumber: function () {
+      if (this.searchTermByPhoneNumber === "") {
+        return []; // Return an empty array when no search term is entered
+      }
+
+      const searchTerm = this.searchTermByPhoneNumber;
+      const filteredPatients = this.patients.filter((patient) => {
+        return patient.phone_number.includes(searchTerm.trim());
+      });
+
+      if (filteredPatients.length === 0) {
+        this.addNewPatientState = true;
+        return;
+      }
+
+      this.addNewPatientState = false;
+      return filteredPatients; // Return the filtered array
+    },
+
+    pageCount: function () {
+      return Math.ceil(this.patients.length / this.pageSize);
+    },
+
+    displayedPatients: function () {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.patients.slice(startIndex, endIndex);
+    },
+  },
+
+  updated: function () {
+    if (this.selectedPatient == "" && this.newpatientid <= 0) {
+      this.$emit("selected-patient", "");
+      return;
+    } else {
+      this.$emit("selected-patient", this.selectedPatient);
+    }
+
+    if (this.newpatientid != this.oldPatientid) {
+      this.newPatientState = true;
+    }
+
+    if (this.newpatientid > 0 && this.newPatientState == true) {
+      this.oldPatientid = this.newpatientid;
+
+      this.fetchPatients();
+
+      this.selectedPatient = this.newpatientid; // Automatically select the new patient
+      this.$emit("selected-patient", this.newpatientid);
+
+      this.newPatientState = false;
+    }
+  },
+
+  mounted: function () {
+    this.fetchPatients(); // Fetch patients when component is mounted
+  },
+
+  template:
     /*html*/
     `
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">
@@ -425,4 +433,4 @@ app.component('patient-selector', {
       </div>
     </div>
     `,
-})
+});

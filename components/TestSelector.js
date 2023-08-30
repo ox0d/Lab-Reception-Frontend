@@ -1,72 +1,88 @@
-app.component('test-selector', {
-    props: {
-        baseurl: {
-            type: String,
-            required: true,
-        }
+app.component("test-selector", {
+  props: {
+    baseurl: {
+      type: String,
+      required: true,
     },
-    emits: ['selected-tests'],
-    data: function() {
-        return {
-            testCategoriesAction: '/test-categories',
-            testsAction: '/tests',
+  },
+  emits: ["selected-tests"],
+  data: function () {
+    return {
+      testCategoriesAction: "/test-categories",
+      testsAction: "/tests",
 
-            testCategories: [], // Array to store fetched testCategories
-            tests: [], // Array to store fetched tests
+      testCategories: [], // Array to store fetched testCategories
+      tests: [], // Array to store fetched tests
 
-            selectedTests: [],
+      selectedTests: [],
 
-            categories: {},
-        }
+      categories: {},
+    };
+  },
+  methods: {
+    fetchTestCategories: async function () {
+      try {
+        const response = await axios.get(
+          this.baseurl + this.testCategoriesAction
+        );
+
+        // Processing testCategories data as needed
+        this.testCategories = response.data;
+      } catch (error) {
+        console.error("Error fetching testCategories:", error);
+      }
     },
-    methods: {
-        fetchTestCategories: async function() {
-            try {
-            const response = await axios.get(this.baseurl + this.testCategoriesAction);
 
-            // Processing testCategories data as needed
-            this.testCategories = response.data;
+    fetchTests: async function () {
+      try {
+        const response = await axios.get(this.baseurl + this.testsAction);
 
-            } catch (error) {
-                console.error('Error fetching testCategories:', error);
-            }
-        },
-
-        fetchTests: async function() {
-            try {
-            const response = await axios.get(this.baseurl + this.testsAction);
-
-            // Processing tests data as needed
-            this.tests = response.data;
-            } catch (error) {
-                console.error('Error fetching tests:', error);
-            }
-        },
-
-        toggleSelectAll: function(categoryName) {
-        
-            if (this.categories[categoryName]) {
-              // If "Select All" is checked, add all test IDs within the category to selectedTests
-              const categoryTests = this.tests.filter(test => test.test_category_id === this.testCategories.find(cat => cat.name === categoryName).id);
-              this.selectedTests = [...this.selectedTests, ...categoryTests.map(test => test.id)];
-            } else {
-              // If "Select All" is unchecked, remove all test IDs from selectedTests within the category
-              this.selectedTests = this.selectedTests.filter(testId => !this.tests.some(test => test.id === testId && test.test_category_id === this.testCategories.find(cat => cat.name === categoryName).id));
-            }
-        },
+        // Processing tests data as needed
+        this.tests = response.data;
+      } catch (error) {
+        console.error("Error fetching tests:", error);
+      }
     },
-    updated: function() {
-        if (this.selectedTests.length == 0) {
-            this.$emit('selected-tests', []);
-            return;
-        }
-        this.$emit('selected-tests', this.selectedTests);
+
+    toggleSelectAll: function (categoryName) {
+      if (this.categories[categoryName]) {
+        // If "Select All" is checked, add all test IDs within the category to selectedTests
+        const categoryTests = this.tests.filter(
+          (test) =>
+            test.test_category_id ===
+            this.testCategories.find((cat) => cat.name === categoryName).id
+        );
+        this.selectedTests = [
+          ...this.selectedTests,
+          ...categoryTests.map((test) => test.id),
+        ];
+      } else {
+        // If "Select All" is unchecked, remove all test IDs from selectedTests within the category
+        this.selectedTests = this.selectedTests.filter(
+          (testId) =>
+            !this.tests.some(
+              (test) =>
+                test.id === testId &&
+                test.test_category_id ===
+                  this.testCategories.find((cat) => cat.name === categoryName)
+                    .id
+            )
+        );
+      }
     },
-    mounted: function() {
-        this.fetchTestCategories(); // Fetch testCategories when component is mounted
-        this.fetchTests(); // Fetch tests when component is mounted
-    },
-    template:
+  },
+  updated: function () {
+    if (this.selectedTests.length == 0) {
+      this.$emit("selected-tests", []);
+      return;
+    }
+    this.$emit("selected-tests", this.selectedTests);
+  },
+  mounted: function () {
+    this.fetchTestCategories(); // Fetch testCategories when component is mounted
+    this.fetchTests(); // Fetch tests when component is mounted
+  },
+  template:
     /*html*/
     `
     <div class="row border border-1 shadow-sm rounded my-4 py-4 px-2">

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Home Page</title>
     <!-- Vuejs CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -12,116 +12,202 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/607acc4652.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/607acc4652.js"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
-
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
     <!-- Vuejs App -->
     <div id="id">
-        <!-- Bootstrap -->
-        <div class="container-lg">
+      <!-- Bootstrap -->
+      <div class="container-lg">
+        <!-- Nav-bar component -->
+        <!-- <nav-bar class="mb-4"></nav-bar> -->
 
-            <!-- Nav-bar component -->
-            <!-- <nav-bar class="mb-4"></nav-bar> -->
-            
-            <!-- Patient-selector component -->
-            <div class="row border border-1 shadow-sm rounded p-4 my-4">
-                <div class="col-12 d-flex justify-content-between">
-                    <h2>Patient Selection</h2>
-                    <button class="btn" v-on:click="updatePatientComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
-                </div>
-                <div class="col-12" v-show="isPatientComponentVisible">                    
-                    <patient-selector ref="patientSelector" v-bind:baseurl="backendBaseURL" v-bind:newpatientid="newPatientId" v-on:show-patient-form="isNewPatientFormComponentVisible = true" v-on:selected-patient="addToSelectedPatient"></patient-selector>
-                </div>
-            </div>
-
-            <!-- New-patient-form component -->
-            <div class="row border border-1 shadow-sm rounded p-4 mb-4" v-show="isNewPatientFormComponentVisible">
-                <div class="col-12 d-flex justify-content-between">
-                    <h2>Add New Patient</h2>
-                    <button class="btn" v-on:click="updateNewPatientFormComponentVisibilityState"><i class="fa-solid fa-solid fa-xmark fs-3"></i></button>
-                </div>
-                <div class="col-12">
-                    <new-patient-form v-bind:baseurl="backendBaseURL" v-on:patient-created="updateNewPatientId" v-on:toast-message="updateToastMessage"></new-patient-form>
-                </div>
-            </div>
-
-            <!-- Doctor-selector component -->
-            <div class="row border border-1 shadow-sm rounded p-4 mb-4">
-                <div class="col-12 d-flex justify-content-between">
-                    <h2>Doctor Selection</h2>
-                    <button class="btn" v-on:click="updateDoctorComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isDoctorComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
-                </div>
-                <div class="col-12" v-show="isDoctorComponentVisible">                    
-                    <doctor-selector ref="doctorSelector" v-bind:baseurl="backendBaseURL" v-on:selected-doctor="addToSelectedDoctor"></doctor-selector>
-                </div>
-            </div>
-
-            <!-- test-selector component -->
-            <div class="row border border-1 shadow-sm rounded p-4 mb-4" v-if="newAppointment.patient_id !== '' && newAppointment.doctor_id !== ''">
-                <div class="col-12 d-flex justify-content-between">
-                    <h2>Test Selection</h2>
-                    <button class="btn" v-on:click="updateTestComponentVisibilityState"><i class="fa-solid fs-3" v-bind:class="[ isTestComponentVisible ? faCaretDown : faCaretLeft]"></i></button>
-                </div>
-                <div class="col-12" v-show="isTestComponentVisible">                    
-                    <test-selector v-bind:baseurl="backendBaseURL" v-on:selected-tests="addToSelectedTests"></test-selector>
-                </div>
-            </div>
-
-            <!-- Submit schedule appointment -->
-            <div class="row p-4 m-4">
-                <div class="col-12 text-center">
-                    <form @submit.prevent="submitForm">
-                        <button type="submit" class="btn btn-primary py-2 px-4" v-if="this.newAppointment.test_ids.length > 0">Schedule Appointment</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Barcode container -->
-            <div class="row border border-1 shadow-sm rounded p-4 mb-4 text-center" v-if="isBarcodeContainerVisible">
-                <div class="col-12 d-flex justify-content-between">
-                    <h2>Patient Barcode</h2>
-                    <button class="btn" v-on:click="updateBarcodeContainerVisibilityState"><i class="fa-solid fa-solid fa-xmark fs-3"></i></button>
-                </div>
-
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-12">
-                            <canvas id="barcode"></canvas>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="d-grid gap-2 col-10 col-sm-6 col-md-4 col-lg-4 col-xl-3 mx-auto">
-                            <button class="btn btn-primary" type="button" v-on:click="printBarcode">Print Barcode</button>
-                            <button class="btn btn-primary" type="button" v-on:click="saveBarcode">Save Barcode</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Toast container -->
-            <div class="position-fixed bottom-0 end-0 p-3">
-                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-                    <div class="toast-header bg-primary text-white">
-                    <strong class="me-auto">Success</strong>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        {{this.toastMessage}}
-                    </div>
-                </div>
-            </div>
-
+        <!-- Patient-selector component -->
+        <div class="row border border-1 shadow-sm rounded p-4 my-4">
+          <div class="col-12 d-flex justify-content-between">
+            <h2>Patient Selection</h2>
+            <button
+              class="btn"
+              v-on:click="updatePatientComponentVisibilityState"
+            >
+              <i
+                class="fa-solid fs-3"
+                v-bind:class="[ isPatientComponentVisible ? faCaretDown : faCaretLeft]"
+              ></i>
+            </button>
+          </div>
+          <div class="col-12" v-show="isPatientComponentVisible">
+            <patient-selector
+              ref="patientSelector"
+              v-bind:baseurl="backendBaseURL"
+              v-bind:newpatientid="newPatientId"
+              v-on:show-patient-form="isNewPatientFormComponentVisible = true"
+              v-on:selected-patient="addToSelectedPatient"
+            ></patient-selector>
+          </div>
         </div>
 
-        
+        <!-- New-patient-form component -->
+        <div
+          class="row border border-1 shadow-sm rounded p-4 mb-4"
+          v-show="isNewPatientFormComponentVisible"
+        >
+          <div class="col-12 d-flex justify-content-between">
+            <h2>Add New Patient</h2>
+            <button
+              class="btn"
+              v-on:click="updateNewPatientFormComponentVisibilityState"
+            >
+              <i class="fa-solid fa-solid fa-xmark fs-3"></i>
+            </button>
+          </div>
+          <div class="col-12">
+            <new-patient-form
+              v-bind:baseurl="backendBaseURL"
+              v-on:patient-created="updateNewPatientId"
+              v-on:toast-message="updateToastMessage"
+            ></new-patient-form>
+          </div>
+        </div>
 
-        <!-- End Vuejs App -->
+        <!-- Doctor-selector component -->
+        <div class="row border border-1 shadow-sm rounded p-4 mb-4">
+          <div class="col-12 d-flex justify-content-between">
+            <h2>Doctor Selection</h2>
+            <button
+              class="btn"
+              v-on:click="updateDoctorComponentVisibilityState"
+            >
+              <i
+                class="fa-solid fs-3"
+                v-bind:class="[ isDoctorComponentVisible ? faCaretDown : faCaretLeft]"
+              ></i>
+            </button>
+          </div>
+          <div class="col-12" v-show="isDoctorComponentVisible">
+            <doctor-selector
+              ref="doctorSelector"
+              v-bind:baseurl="backendBaseURL"
+              v-on:selected-doctor="addToSelectedDoctor"
+            ></doctor-selector>
+          </div>
+        </div>
+
+        <!-- test-selector component -->
+        <div
+          class="row border border-1 shadow-sm rounded p-4 mb-4"
+          v-if="newAppointment.patient_id !== '' && newAppointment.doctor_id !== ''"
+        >
+          <div class="col-12 d-flex justify-content-between">
+            <h2>Test Selection</h2>
+            <button class="btn" v-on:click="updateTestComponentVisibilityState">
+              <i
+                class="fa-solid fs-3"
+                v-bind:class="[ isTestComponentVisible ? faCaretDown : faCaretLeft]"
+              ></i>
+            </button>
+          </div>
+          <div class="col-12" v-show="isTestComponentVisible">
+            <test-selector
+              v-bind:baseurl="backendBaseURL"
+              v-on:selected-tests="addToSelectedTests"
+            ></test-selector>
+          </div>
+        </div>
+
+        <!-- Submit schedule appointment -->
+        <div class="row p-4 m-4">
+          <div class="col-12 text-center">
+            <form @submit.prevent="submitForm">
+              <button
+                type="submit"
+                class="btn btn-primary py-2 px-4"
+                v-if="this.newAppointment.test_ids.length > 0"
+              >
+                Schedule Appointment
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Barcode container -->
+        <div
+          class="row border border-1 shadow-sm rounded p-4 mb-4 text-center"
+          v-if="isBarcodeContainerVisible"
+        >
+          <div class="col-12 d-flex justify-content-between">
+            <h2>Patient Barcode</h2>
+            <button
+              class="btn"
+              v-on:click="updateBarcodeContainerVisibilityState"
+            >
+              <i class="fa-solid fa-solid fa-xmark fs-3"></i>
+            </button>
+          </div>
+
+          <div class="col-12">
+            <div class="row">
+              <div class="col-12">
+                <canvas id="barcode"></canvas>
+              </div>
+            </div>
+            <div class="row">
+              <div
+                class="d-grid gap-2 col-10 col-sm-6 col-md-4 col-lg-4 col-xl-3 mx-auto"
+              >
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  v-on:click="printBarcode"
+                >
+                  Print Barcode
+                </button>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  v-on:click="saveBarcode"
+                >
+                  Save Barcode
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toast container -->
+        <div class="position-fixed bottom-0 end-0 p-3">
+          <div
+            class="toast"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-bs-delay="5000"
+          >
+            <div class="toast-header bg-primary text-white">
+              <strong class="me-auto">Success</strong>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="toast"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="toast-body">{{this.toastMessage}}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- End Vuejs App -->
     </div>
-
 
     <!-- Import Vue App -->
     <script src="./main.js"></script>
@@ -135,7 +221,7 @@
 
     <!-- Mount Vue App -->
     <script>
-        const mountedApp = app.mount('#id');
+      const mountedApp = app.mount("#id");
     </script>
 
     <!-- Bootstrap JS -->
@@ -143,5 +229,5 @@
 
     <!-- JsBarcode CDN -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
-</body>
+  </body>
 </html>

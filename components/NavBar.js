@@ -1,10 +1,8 @@
-app.component('nav-bar', {
-    data: function() {
-        return {
-
-        };
-    },
-    template:
+app.component("nav-bar", {
+  data: function () {
+    return {};
+  },
+  template:
     /*html*/
     `
     <nav class="navbar navbar-expand-lg border-bottom">
@@ -29,5 +27,5 @@ app.component('nav-bar', {
         </div>
     </nav>
     
-    `
+    `,
 });
